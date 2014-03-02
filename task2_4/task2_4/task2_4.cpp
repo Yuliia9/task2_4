@@ -3,171 +3,220 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "task2_4.h"
 
-/*maximum length of student's surname/name*/
-const int LEN = 20;
+const unsigned char ERROR = 0;
+const unsigned char SUCCESS = 1;
+const unsigned char MAIN_SUCCESS = 0;
 
-struct stud
-{
-	char surname[LEN];
-	char name[LEN];
-	int *marks;
-	double average;
-};
-/*checking entered data and return 0 if type doesn't match requirements*/
-int Type_checking(int retCode, int val);
-
-/*checking if string pstr involves only digits*/
-int Is_digit(char* pstr);
-
-/*sorted table of information about students by surname*/
-void Sort_by_surname(struct stud* stud_table, int n);
-
-/*evaluated the average mark*/
-double Calc_average(int* marks, int exam);
-
-/*sorted table of information about students by average mark*/
-void Sort_by_mark(struct stud* stud_table, int n);
 
 int main( )
 {
-	printf("Please enter integer number of how many students passed the examinations: ");
-	int num_of_stud;
-	int retCode;
-	retCode = scanf("%i", &num_of_stud);
-	if (0 == Type_checking(retCode, num_of_stud)) return 0;
+	Interface();
+	unsigned int num;
+	unsigned char  retCode;
+	unsigned int num_marks, i;
 
-	struct stud* student_list = (stud*)malloc(num_of_stud*sizeof(stud));
-
-	printf("Enter how many exams did student pass: ");
-	int num_of_marks;
-	retCode = scanf("%i", &num_of_marks);
-	if (0 == Type_checking(retCode, num_of_marks)) return 0;
-	for (int i = 0; i < num_of_stud;i++)
+	do 
 	{
-		student_list[i].marks = (int*)calloc(num_of_marks,sizeof(int));
+		printf("Please enter integer number of how many students passed the examinations: ");
+		retCode = scanf("%u", &num);
+		fflush(stdin); // Flush the input buffer
+	} while (Type_checking(retCode, (int) num) == ERROR);
+	
+	printf("List will consist of %u students", num);
+
+
+	struct stud* students = (stud*)malloc(num*sizeof(stud));
+	if (students == NULL)
+	{
+		printf("Error occurs while trying to allocate memory for list of points. \n");
+		return (int)ERROR;
+	}
+	
+	
+	do
+	{
+		printf("Enter how many exams did student pass: ");
+		retCode = scanf("%u", &num_marks);
+		fflush(stdin); // Flush the input buffer
+	} while (Type_checking(retCode, (int)num_marks) == ERROR);
+
+
+	for (i = 0; i < num; ++i)
+	{
+		students[i].marks = (unsigned int*)calloc(num_marks,sizeof(unsigned int));
 
 	}
 
+	retCode = Input(students, num, num_marks);
+	if (retCode == ERROR)
+	{
+		free(students);
+		return (int)ERROR;
+	}
+
+	retCode = Sort_by_surname(students, num);
+	if (retCode == ERROR)
+	{
+		free(students);
+		return (int)ERROR;
+	}
+
+	retCode = Output(students, num, num_marks);
+	if (retCode == ERROR)
+	{
+		free(students);
+		return (int)ERROR;
+	}
+
+	retCode = Get_2_best(students, num); 
+	if (retCode == ERROR)
+	{
+		free(students);
+		return (int)ERROR;
+	}
+
+
+	free(students);
+	system("pause");
+	return MAIN_SUCCESS;
+}
+
+void Interface()
+{
+	printf("Hi! Please welcome to your personal students rang handler.\n");
+	printf("You can store list of students surnames and names and their marks on exams.\n");
+	printf("Program will define for you two smartest students.\n");
+	printf("Program made by Yuliia Lyubchik;)\n");
+}
+
+unsigned char Type_checking(unsigned char retCode, int val)
+{
+	if (retCode == ERROR)
+	{
+		printf("Type mismatch. Please next time check the number. \n");
+		return ERROR;
+	}
+	if (val <= 0)
+	{
+		printf("The value can not be negative or zero.\n");
+		return ERROR;
+	}
+	return SUCCESS;
+}
+unsigned char Input(struct stud* students, unsigned int num, unsigned int marks)
+{
+	if (students == NULL)
+	{
+		printf("Error occurs trying to get access to memory.\n");
+		return ERROR;
+	}
 	const char separator = ',';
-	int j;
-	for (int i = 0; i < num_of_stud; i++)
+	unsigned int i, j;
+	unsigned char retCode;
+	for (i = 0; i < num; ++i)
 	{
 		printf("Enter information about %i student: \n", i + 1);
 		char temp[LEN * 2 + 1];
-		printf("surname, name separated by comma: ");
-		scanf("%s", &temp);
+		do
+		{
+			printf("surname, name separated by comma: ");
+			gets(temp);
+		} while (strlen(temp) == 0);
+		
 
 		j = strchr(temp, separator) - temp;
-		strcpy(student_list[i].name, temp + j + 1);
+		strcpy(students[i].name, temp + j + 1);
 		temp[j] = '\0';
-		strcpy(student_list[i].surname, temp);
-		printf("enter %i marks separated by comma:  ", num_of_marks);
-		scanf("%s",&temp);
-		char* token; 
-		int marks_count = 0;
-		
-		token = strtok(temp,",");
-
-		while (token != NULL && marks_count < num_of_marks)
+		strcpy(students[i].surname, temp);
+		do
 		{
-			if (0 == Is_digit(token))
+			printf("enter %i marks separated by comma:  ", marks);
+			gets(temp);
+			char* token;
+			unsigned int marks_count = 0;
+
+			token = strtok(temp, ",");
+
+			while (token != NULL && marks_count < marks)
 			{
-				printf("Type mismatch. \n");
-				return 0;
+				if (Is_digit(token) == ERROR)
+				{
+					printf("Type mismatch. Next time please check if you entered integer numbers \n");
+					fflush(stdin);
+					retCode = ERROR;
+					break;
+				}
+				students[i].marks[marks_count] = atoi(token);
+				token = strtok(NULL, ",");
+				marks_count++;
+				retCode = SUCCESS;
 			}
-			student_list[i].marks[marks_count] = atoi(token);
-			token = strtok(NULL, ",");
-			marks_count++;
-		}
-		if (marks_count != num_of_marks)
-		{
-			printf("Warning! Not all marks inputed, rest of marks will be zero. \n");
-		}
-		student_list[i].average = Calc_average(student_list[i].marks, num_of_marks);
+			if (marks_count != marks)
+			{
+				printf("Marks weren't inputed . \n");
+				retCode = ERROR;
+			}
+		} while (retCode == ERROR);
+		students[i].average = Calc_average(students[i].marks, marks);
 	}
-	Sort_by_surname(student_list, num_of_stud);
-	printf("Information about student sorted by surname of student:\n");
-	for (int i = 0; i < num_of_stud; i++)
+	return SUCCESS;
+}
+unsigned char Is_digit(const char* pstr)
+{
+	if (pstr == NULL)
 	{
-		
-		printf("%s\t", student_list[i].surname);
-		printf("%s\t", student_list[i].name);
-		for (int j = 0; j < num_of_marks; j++)
-		{
-			printf("%i  ", student_list[i].marks[j]);
-		}
-		printf("\n");
+		return ERROR;
 	}
-	printf("2 students with best average mark: \n");
-	Sort_by_mark(student_list,num_of_stud);
-	int a = num_of_stud < 2 ? 1 : 2;
-	for (int i = 0; i < a; i++)
+	unsigned int i;
+	for (i = 0; i < strlen(pstr); ++i)
 	{
-		printf("Students surname %s and average mark %f \n", student_list[i].surname, student_list[i].average);
+		if (pstr[i] >= 48 && pstr[i] <= 57)
+		{
+			continue;
+		}
+		else
+			{
+				return ERROR;
+			}
+
 	}
-	return 0;
+	return SUCCESS;
 }
 
-int Type_checking(int retCode, int val)
+unsigned char Sort_by_surname(struct stud* students, unsigned int n)
 {
-	if (0 == retCode)
+	if (students == NULL)
 	{
-		printf("Type mismatch.");
-		return 0;
+		printf("Error occurs trying to get access to date to sort it.\n");
+		return ERROR;
 	}
-	if (val < 0)
-	{
-		printf("The value can not be negative or null.");
-		return 0;
-	}
-	return 1;
-}
-
-int Is_digit(char* pstr)
-{
-	char* psubstr;
-	char key[] = "0123456789";
-	psubstr = strpbrk(pstr, key);
-	if (psubstr == NULL)
-	{
-		return 0;
-	}
-	int shift = 0;
-	while (psubstr != NULL)
-	{
-		if (psubstr != (pstr + shift))
-		{
-			return 0;
-		}
-		psubstr = strpbrk(psubstr + 1, key);
-		shift++;
-	}
-	return 1;
-}
-
-void Sort_by_surname(struct stud* stud_table, int n)
-{
+	unsigned int i, j;
 	struct stud temp;
-	for (int i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 	{
-		for (int j = i + 1; j < n;j++)
+		for (j = i + 1; j < n;j++)
 		{
-			if (1 == strcmp((stud_table+i)->surname, (stud_table+j)->surname))
+			if (1 == strcmp((students+i)->surname, (students+j)->surname))
 			{
-				temp = *(stud_table + i);
-				*(stud_table + i) = *(stud_table + j);
-				*(stud_table + j) = temp;
+
+				memcpy(&temp, students + j, sizeof(stud));
+				memcpy(students + j, students + i, sizeof(stud));
+				memcpy(students + i, &temp, sizeof(stud));
+				
 			}
 		}
 	}
+	return SUCCESS;
 
 }
 
-double Calc_average(int* marks, int exam)
+double Calc_average(const unsigned int* marks, unsigned int exam)
 {
 	double average = 0;
-	for (int i = 0; i < exam;i++)
+	unsigned int i;
+	for (i = 0; i < exam ; ++i)
 	{
 		average += marks[i];
 	}
@@ -175,19 +224,64 @@ double Calc_average(int* marks, int exam)
 	return average;
 }
 
-void Sort_by_mark(struct stud* stud_table, int n)
+unsigned char Output(const struct stud* students, unsigned int num, unsigned int marks)
 {
-	struct stud temp;
-	for (int i = 0; i < n; i++)
+	if (students == NULL)
 	{
-		for (int j = i + 1; j < n; j++)
+		printf("Error occurs trying to get access to data to display it.\n");
+		return ERROR;
+	}
+	unsigned int i, j;
+	printf("Information about student sorted by surname of student:\n");
+	for (i = 0; i < num; ++i)
+	{
+		printf("%s\t", students[i].surname);
+		printf("%s\t", students[i].name);
+
+		for (j = 0; j < marks; ++j)
 		{
-			if ((stud_table + i)->average <= (stud_table + j)->average)
+			printf("%i,", students[i].marks[j]);
+		}
+		printf("\n");
+	}
+	return SUCCESS;
+}
+
+unsigned char Get_2_best(const struct stud* students, unsigned int n)
+{
+	if (students == NULL)
+	{
+		printf("Error occurs trying to get access to data to provide estimation.\n");
+		return ERROR;
+	}
+	
+	unsigned int i = 0, j;
+	int best[2] = {i,0};
+	unsigned int stud1, stud2;
+	for (i = 0; i < 2; ++i)
+	{
+		for (j = i + 1; j < n; ++j)
+		{
+			if (((students + best[i])->average >(students + j)->average))
 			{
-				temp = *(stud_table + i);
-				*(stud_table + i) = *(stud_table + j);
-				*(stud_table + j) = temp;
+				if (i > 0)
+				{
+					if (best[i -1] != j)
+					{
+						best[i] = j;
+					}
+					else continue;
+				}
+				else best[i] = j;
 			}
+
 		}
 	}
+	printf("Students with best average mark: \n");
+	unsigned int a = n < 2 ? 1 : 2;
+	for (int i = 0; i < a; ++i)
+	{
+		printf("%s\n", (students + best[i])->surname);
+	}
+	return SUCCESS;
 }

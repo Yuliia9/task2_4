@@ -1,15 +1,18 @@
-﻿Build started 2/23/2014 11:21:59 PM.
-     1>Project "c:\Users\Jullia\documents\visual studio 2013\Projects\task2_4\task2_4\task2_4.vcxproj" on node 2 (Build target(s)).
+﻿Build started 3/1/2014 7:47:19 PM.
+     1>Project "E:\task2_4\task2_4\task2_4\task2_4.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\task2_4.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt task2_4.cpp
          task2_4.cpp
-     1>c:\users\jullia\documents\visual studio 2013\projects\task2_4\task2_4\task2_4.cpp(2): warning C4651: '/D_CRT_SECURE_NO_WARNINGS' specified for precompiled header but not for current compile
+     1>e:\task2_4\task2_4\task2_4\task2_4.cpp(2): warning C4651: '/D_CRT_SECURE_NO_WARNINGS' specified for precompiled header but not for current compile
+     1>e:\task2_4\task2_4\task2_4\task2_4.cpp(264): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\task2_4\task2_4\task2_4\task2_4.cpp(242): warning C4101: 'stud1' : unreferenced local variable
+     1>e:\task2_4\task2_4\task2_4\task2_4.cpp(242): warning C4101: 'stud2' : unreferenced local variable
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"c:\users\jullia\documents\visual studio 2013\Projects\task2_4\Debug\task2_4.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"c:\users\jullia\documents\visual studio 2013\Projects\task2_4\Debug\task2_4.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"c:\users\jullia\documents\visual studio 2013\Projects\task2_4\Debug\task2_4.lib" /MACHINE:X86 Debug\stdafx.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\task2_4\task2_4\Debug\task2_4.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\task2_4\task2_4\Debug\task2_4.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\task2_4\task2_4\Debug\task2_4.lib" /MACHINE:X86 Debug\stdafx.obj
          Debug\task2_4.obj
-         task2_4.vcxproj -> c:\users\jullia\documents\visual studio 2013\Projects\task2_4\Debug\task2_4.exe
-     1>Done Building Project "c:\Users\Jullia\documents\visual studio 2013\Projects\task2_4\task2_4\task2_4.vcxproj" (Build target(s)).
+         task2_4.vcxproj -> E:\task2_4\task2_4\Debug\task2_4.exe
+     1>Done Building Project "E:\task2_4\task2_4\task2_4\task2_4.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.59
+Time Elapsed 00:00:01.50
