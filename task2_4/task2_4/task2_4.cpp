@@ -1,9 +1,22 @@
+/**
+* @file		task2_4.cpp
+* @brief	Program creates database for holding informations about students examination marks
+			and defines two students with best average mark
+*
+* Copyright 2014 by Yuliia Lyubchik
+*
+* This software is the confidential and proprietary information
+* of Yuliia Lyubchik. ("Confidential Information").  You
+* shall not disclose such Confidential Information and shall use
+* it only with permission from Yuliia.
+*/
 
 #include "stdafx.h"
+#include "task2_4.h" /*defines data types and prototypes of used in this file functions*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "task2_4.h"
+
 
 const unsigned char ERROR = 0;
 const unsigned char SUCCESS = 1;
@@ -13,6 +26,7 @@ const unsigned char MAIN_SUCCESS = 0;
 int main( )
 {
 	Interface();
+
 	unsigned int num;
 	unsigned char  retCode;
 	unsigned int num_marks, i;
@@ -24,10 +38,11 @@ int main( )
 		fflush(stdin); // Flush the input buffer
 	} while (Type_checking(retCode, (int) num) == ERROR);
 	
-	printf("List will consist of %u students", num);
+	printf("Database will consist of %u students.\n", num);
 
 
 	struct stud* students = (stud*)malloc(num*sizeof(stud));
+
 	if (students == NULL)
 	{
 		printf("Error occurs while trying to allocate memory for list of points. \n");
@@ -45,7 +60,7 @@ int main( )
 
 	for (i = 0; i < num; ++i)
 	{
-		students[i].marks = (unsigned int*)calloc(num_marks,sizeof(unsigned int));
+		students[i].marks = (unsigned int*) calloc (num_marks,sizeof (unsigned int) );
 
 	}
 
@@ -85,10 +100,12 @@ int main( )
 
 void Interface()
 {
-	printf("Hi! Please welcome to your personal students rang handler.\n");
+	printf("---------------------------------------------------------------------------\n");
+	printf("Hi! Welcome to your personal students rang handler.\n");
 	printf("You can store list of students surnames and names and their marks on exams.\n");
 	printf("Program will define for you two smartest students.\n");
 	printf("Program made by Yuliia Lyubchik;)\n");
+	printf("---------------------------------------------------------------------------\n");
 }
 
 unsigned char Type_checking(unsigned char retCode, int val)
@@ -105,27 +122,35 @@ unsigned char Type_checking(unsigned char retCode, int val)
 	}
 	return SUCCESS;
 }
+
+
 unsigned char Input(struct stud* students, unsigned int num, unsigned int marks)
 {
 	if (students == NULL)
 	{
-		printf("Error occurs trying to get access to memory.\n");
+		printf("Error occurs while trying to get access to memory to input data.\n");
 		return ERROR;
 	}
 	const char separator = ',';
 	unsigned int i, j;
 	unsigned char retCode;
+	char* retCode2;
 	for (i = 0; i < num; ++i)
 	{
 		printf("Enter information about %i student: \n", i + 1);
 		char temp[LEN * 2 + 1];
-		do
+		do 
 		{
-			printf("surname, name separated by comma: ");
-			gets(temp);
-		} while (strlen(temp) == 0);
-		
+			do
+			{
+				printf("surname, name separated by comma: ");
+				gets(temp);
 
+			} while (strlen(temp) == 0);
+
+			retCode2 = strchr(temp, separator);
+		} while (retCode2 == NULL);
+		
 		j = strchr(temp, separator) - temp;
 		strcpy(students[i].name, temp + j + 1);
 		temp[j] = '\0';
@@ -155,7 +180,7 @@ unsigned char Input(struct stud* students, unsigned int num, unsigned int marks)
 			}
 			if (marks_count != marks)
 			{
-				printf("Marks weren't inputed . \n");
+				printf("Marks weren't inputed. \n");
 				retCode = ERROR;
 			}
 		} while (retCode == ERROR);
@@ -163,6 +188,8 @@ unsigned char Input(struct stud* students, unsigned int num, unsigned int marks)
 	}
 	return SUCCESS;
 }
+
+
 unsigned char Is_digit(const char* pstr)
 {
 	if (pstr == NULL)
@@ -185,11 +212,13 @@ unsigned char Is_digit(const char* pstr)
 	return SUCCESS;
 }
 
+
+
 unsigned char Sort_by_surname(struct stud* students, unsigned int n)
 {
 	if (students == NULL)
 	{
-		printf("Error occurs trying to get access to date to sort it.\n");
+		printf("Error occurs while trying to get access to date to sort it.\n");
 		return ERROR;
 	}
 	unsigned int i, j;
@@ -209,8 +238,9 @@ unsigned char Sort_by_surname(struct stud* students, unsigned int n)
 		}
 	}
 	return SUCCESS;
-
 }
+
+
 
 double Calc_average(const unsigned int* marks, unsigned int exam)
 {
@@ -224,15 +254,16 @@ double Calc_average(const unsigned int* marks, unsigned int exam)
 	return average;
 }
 
+
 unsigned char Output(const struct stud* students, unsigned int num, unsigned int marks)
 {
 	if (students == NULL)
 	{
-		printf("Error occurs trying to get access to data to display it.\n");
+		printf("Error occurs while trying to get access to data to display it.\n");
 		return ERROR;
 	}
 	unsigned int i, j;
-	printf("Information about student sorted by surname of student:\n");
+	printf("Information about student sorted by students surname:\n");
 	for (i = 0; i < num; ++i)
 	{
 		printf("%s\t", students[i].surname);
@@ -247,11 +278,12 @@ unsigned char Output(const struct stud* students, unsigned int num, unsigned int
 	return SUCCESS;
 }
 
+
 unsigned char Get_2_best(const struct stud* students, unsigned int n)
 {
 	if (students == NULL)
 	{
-		printf("Error occurs trying to get access to data to provide estimation.\n");
+		printf("Error occurs while trying to get access to data to provide estimation.\n");
 		return ERROR;
 	}
 	
@@ -260,13 +292,13 @@ unsigned char Get_2_best(const struct stud* students, unsigned int n)
 	unsigned int stud1, stud2;
 	for (i = 0; i < 2; ++i)
 	{
-		for (j = i + 1; j < n; ++j)
+		for (j = 0 ; j < n; ++j)
 		{
-			if (((students + best[i])->average >(students + j)->average))
+			if (((students + best[i])->average < (students + j)->average))
 			{
 				if (i > 0)
 				{
-					if (best[i -1] != j)
+					if (best[i-1] != j)
 					{
 						best[i] = j;
 					}
@@ -277,7 +309,7 @@ unsigned char Get_2_best(const struct stud* students, unsigned int n)
 
 		}
 	}
-	printf("Students with best average mark: \n");
+	printf("Student(s) with best average mark: \n");
 	unsigned int a = n < 2 ? 1 : 2;
 	for (int i = 0; i < a; ++i)
 	{
